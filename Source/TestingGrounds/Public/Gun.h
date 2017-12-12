@@ -19,7 +19,7 @@ public:
 	class USkeletalMeshComponent* FP_Gun;
 
 	/** Location on gun mesh where projectiles should spawn. */
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class USceneComponent* FP_MuzzleLocation;
 
 	/** Gun muzzle's offset from the characters location */
