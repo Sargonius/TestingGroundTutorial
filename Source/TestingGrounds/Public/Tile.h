@@ -6,6 +6,38 @@
 #include "GameFramework/Actor.h"
 #include "Tile.generated.h"
 
+USTRUCT(BlueprintType)
+struct FSpawnPosition
+{
+	GENERATED_USTRUCT_BODY()
+	
+	UPROPERTY(BlueprintReadWrite)
+	FVector Location;
+	UPROPERTY(BlueprintReadWrite)
+	float Rotation;
+	UPROPERTY(BlueprintReadWrite)
+	float Scale;
+};
+
+USTRUCT(BlueprintType)
+struct FSpawnParameters
+{
+	GENERATED_USTRUCT_BODY()
+	
+	UPROPERTY(BlueprintReadWrite)
+	int32 MinSpawn = 1;
+	UPROPERTY(BlueprintReadWrite)
+	int32 MaxSpawn = 1;
+	UPROPERTY(BlueprintReadWrite)
+	float Radius = 500;
+	UPROPERTY(BlueprintReadWrite)
+	float MinScale = 1;
+	UPROPERTY(BlueprintReadWrite)
+	float MaxScale = 1;
+};
+
+class UActorPool;
+
 UCLASS()
 class TESTINGGROUNDS_API ATile : public AActor
 {
@@ -23,15 +55,29 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable, Category = "Setup")
-	void PlaceActors(TSubclassOf<AActor> ToSpawn, int32 MinSpawn = 1, int32 MaxSpawn = 1, float Radius = 500, float MinScale = 1, float MaxScale = 1);
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	void PlaceActors(TSubclassOf<AActor> ToSpawn, FSpawnParameters SpawnParameters);
+
+	UFUNCTION(BlueprintCallable)
+	void SetPool(UActorPool* Pool);
+
+	void PositionNavMeshBoundsVolume();
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	FVector NavigationVolumeOffset;
 
 private:
+
+	TArray<FSpawnPosition> RandomSpawnPositions(FSpawnParameters SpawnParameters);
+
 	bool CanSpawnAtLocation(FVector Location, float Radius);
 	
 	bool FindEmptyLocation(FVector &OutLocation, float Radius);
 
-	void PlaceActor(TSubclassOf<AActor> ToSpawn, FVector SpawnPoint, float Rotation, float Scale);
+	void PlaceActor(TSubclassOf<AActor> ToSpawn, FSpawnPosition SpawnPosition);
 	
+	UActorPool* Pool;
+	AActor* NavMeshBoundsVolume;
 };
