@@ -60,6 +60,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void PlaceActors(TSubclassOf<AActor> ToSpawn, FSpawnParameters SpawnParameters);
 
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	void PlaceAIPawns(TSubclassOf<APawn> ToSpawn, FSpawnParameters SpawnParameters);
+
 	UFUNCTION(BlueprintCallable)
 	void SetPool(UActorPool* Pool);
 
@@ -76,7 +79,12 @@ private:
 	
 	bool FindEmptyLocation(FVector &OutLocation, float Radius);
 
+	template<class T>
+	void RandomlyPlaceActors(TSubclassOf<T> ToSpawn, FSpawnParameters SpawnPosition);
+
 	void PlaceActor(TSubclassOf<AActor> ToSpawn, FSpawnPosition SpawnPosition);
+
+	void PlaceActor(TSubclassOf<APawn> ToSpawn, FSpawnPosition SpawnPosition);
 	
 	UActorPool* Pool;
 	AActor* NavMeshBoundsVolume;
